@@ -7,4 +7,6 @@ public interface IEvaluacionRepository extends CRUDRepository<Evaluacion, Intege
     Evaluacion findByNota(int nota);
 
     Evaluacion update(int idEvaluacion, Evaluacion evaluacion, boolean mod);
+
+    void clearAll();
 }

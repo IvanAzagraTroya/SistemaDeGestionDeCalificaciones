@@ -11,7 +11,8 @@ import java.io.Reader;
 import java.sql.*;
 import java.util.Optional;
 
-//Error en el @NonNull de lombok, no me encuentra la dependencia
+//Error en el @NonNull si no se importa la dependencia al pom.xml
+// Error por el uso de libreria de apache, habrá que ver si la usamos para importarla también al pom
 
 /**
  * Manejador de Bases de Datos Relacionales

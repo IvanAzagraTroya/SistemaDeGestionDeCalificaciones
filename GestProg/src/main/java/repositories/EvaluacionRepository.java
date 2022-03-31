@@ -5,6 +5,9 @@ import models.Evaluacion;
 import java.sql.SQLException;
 import java.util.Optional;
 
+/**
+ * @author Iván Azagra Troya
+ */
 public class EvaluacionRepository implements IEvaluacionRepository {
     private static EvaluacionRepository instance;
 

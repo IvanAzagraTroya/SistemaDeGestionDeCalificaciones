@@ -5,6 +5,9 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * @author Iván Azagra Troya
+ */
 public class Backup {
     private final String createdAt = LocalDateTime.now().toString();
     private List<Alumno> alumnos;

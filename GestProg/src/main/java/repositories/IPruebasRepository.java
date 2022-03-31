@@ -1,4 +1,7 @@
 package repositories;
 
-public interface IPruebasRepository {
+import models.Prueba;
+
+public interface IPruebasRepository extends CRUDRepository<Prueba, Integer>{
+
 }
