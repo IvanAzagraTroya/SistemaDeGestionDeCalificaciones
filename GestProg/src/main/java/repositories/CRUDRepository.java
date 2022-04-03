@@ -1,6 +1,8 @@
 package repositories;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Interfaz que permite realizar las tareas del CRUD
@@ -8,16 +10,47 @@ import java.util.List;
  * en nuestro caso variamos UPDATE por ... todo
  * @param <T>
  * @param <ID>
+ * @throws SQLException en caso de error en la base de datos
  */
 public interface CRUDRepository<T, ID> {
 
-    List<T> findAll();
+    /**
+     *
+     * @return lista de elementos
+     * @throws SQLException
+     */
+    List<T> findAll() throws SQLException;
 
-    T findById(ID id);
+    /**
+     *
+     * @param id
+     * @return Optional del elemento
+     * @throws SQLException
+     */
+    Optional<T> findById(ID id) throws SQLException;
 
-    T save(T entity);
+    /**
+     *
+     * @param entity
+     * @return Elemento insertado
+     * @throws SQLException
+     */
+    Optional<T> save(T entity) throws SQLException;
 
-    T update(ID id, T entity);
+    /**
+     *
+     * @param id
+     * @param entity
+     * @return Elemento actualizado
+     * @throws SQLException
+     */
+    Optional<T> update(ID id, T entity) throws SQLException;
 
-    T delete(ID id);
+    /**
+     *
+     * @param id
+     * @return Elemento eliminado
+     * @throws SQLException
+     */
+    Optional<T> delete(ID id) throws SQLException;
 }

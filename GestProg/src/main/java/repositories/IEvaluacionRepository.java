@@ -2,11 +2,9 @@ package repositories;
 
 import models.Evaluacion;
 
+import java.sql.SQLException;
+
 public interface IEvaluacionRepository extends CRUDRepository<Evaluacion, Integer>{
 
-    Evaluacion findByNota(int nota);
-
-    Evaluacion update(int idEvaluacion, Evaluacion evaluacion, boolean mod);
-
-    void clearAll();
+    void clearAll()  throws SQLException;
 }

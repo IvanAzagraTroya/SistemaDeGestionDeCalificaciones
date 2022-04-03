@@ -8,13 +8,13 @@ import java.util.List;
 /**
  * @author Iván Azagra Troya
  */
+@Builder
 public class Backup {
     private final String createdAt = LocalDateTime.now().toString();
     private List<Alumno> alumnos;
     private List<Prueba> pruebas;
     private List<Evaluacion> evaluaciones;
 
-    @Builder
     public List<Alumno> getAlumnos() {
         return alumnos;
     }
