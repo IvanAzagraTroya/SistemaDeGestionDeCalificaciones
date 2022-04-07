@@ -37,14 +37,6 @@ public interface CRUDRepository<T, ID> {
      */
     Optional<T> save(T entity) throws SQLException;
 
-    /**
-     *
-     * @param id
-     * @param entity
-     * @return Elemento actualizado
-     * @throws SQLException
-     */
-    Optional<T> update(ID id, T entity) throws SQLException;
 
     /**
      *

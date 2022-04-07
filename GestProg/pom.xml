@@ -58,5 +58,11 @@
             <version>4.4.0</version>
             <scope>test</scope>
         </dependency>
+        <!--Markdown generator-->
+        <dependency>
+            <groupId>fun.mingshan</groupId>
+            <artifactId>markdown4j</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>

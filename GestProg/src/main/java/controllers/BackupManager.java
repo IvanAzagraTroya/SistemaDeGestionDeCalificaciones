@@ -58,7 +58,6 @@ public class BackupManager {
     /**
      * Exporta los datos desde un fichero de Backup
      */
-    // fallo: Non-static method 'builder()' cannot be referenced from a static context
     public void exportarDatos() throws SQLException {
         System.out.println("Exportando datos a fichero de backup");
         var alumnos = alumnoRepository.findAll();
@@ -67,7 +66,7 @@ public class BackupManager {
         Backup backup = Backup.builder()
                 .alumnos(alumnos)
                 .evaluaciones(evaluaciones)
-                .prueba(prueba)
+                .pruebas(prueba)
                 .build();
         var res = storageBackup.save(backup);
         if(res) {

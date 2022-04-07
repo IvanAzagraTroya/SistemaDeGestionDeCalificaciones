@@ -1,6 +1,7 @@
 package models;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Clase que representa a un alumno
@@ -86,14 +87,14 @@ public class Alumno {
         this.evaluacionContinua = evaluacionContinua;
     }
 
-    public Alumno nombre(String nombre) {
+    public Optional<Alumno> nombre(String nombre) {
         this.nombre=nombre;
-        return this;
+        return Optional.of(this);
     }
 
-    public Alumno apellidos(String apellidos) {
+    public Optional<Alumno> apellidos(String apellidos) {
         this.apellidos=apellidos;
-        return this;
+        return Optional.of(this);
     }
 
     public Alumno dni(String dni) {

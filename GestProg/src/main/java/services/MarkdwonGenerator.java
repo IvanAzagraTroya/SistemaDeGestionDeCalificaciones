@@ -1,20 +1,48 @@
 package services;
 
+import fun.mingshan.markdown4j.type.block.CodeBlock;
+import fun.mingshan.markdown4j.type.block.TableBlock;
 import models.Alumno;
-import models.Evaluacion;
 
-public class MarkdwonGenerator {
-    public String mdGenerator() {
-        String header = "# Gestión de calificaciones";
-        String separator = "----------- ";
-        String data = " Datos de la evaluación";
-        String alumnos;
-        for (int i = 0; i < Alumnos size; i++){ // dejo puesto para completar más tarde
-            alumnos = "*" + Alumno.getNombre();
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * @author Iván Azagra
+ */
+public class MarkdwonGenerator implements IStorageAlumno {
+    private final Path currentRelativePath = Paths.get("");
+    private final String ruta = currentRelativePath.toAbsolutePath().toString();
+    private final String dir = ruta + File.separator + "data";
+    private final String alumnoMarkdown = dir +File.separator + "GestorDeEvaluaciones.md";
+
+    public MarkdwonGenerator() {
+        init()
+    }
+
+    private void init(){
+        Path path = Paths.get(dir);
+        if(!Files.exists(path)) {
+            try{
+                Files.createDirectories(path);
+            }catch(IOException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
         }
-        String generatedAt = "**Generado el día**: " +;
-        String time = "**Proceso terminado en**: " +;
-        String plantilla = header + "\n" + separator + "\n" + data + "\n" + alumnos + "\n" + separator + "\n" + generatedAt + "\n" + time;
-        return plantilla;
+    }
+
+    @Override
+    public boolean save(List<Optional<Alumno>>){
+        CodeBlock codeBlock = CodeBlock.builder().
+                                language(CodeBlock.Language.JAVA.getDesc()).
+                                content("# Gestión de calificaciones").
+                                build();
+        List<TableBlock.TableRow> rows = new ArrayList<>();
     }
 }

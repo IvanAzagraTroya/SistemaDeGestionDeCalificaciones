@@ -5,6 +5,9 @@ import repositories.EvaluacionRepository;
 
 import java.util.List;
 
+/**
+ * @author Iván Azagra
+ */
 public class EvaluacionController {
     public EvaluacionController(EvaluacionRepository evaluacionRepository) {
     }

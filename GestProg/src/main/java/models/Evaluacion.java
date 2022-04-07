@@ -1,5 +1,8 @@
 package models;
 
+/**
+ * @author Iván Azagra
+ */
 public class Evaluacion {
 
     private int idEvaluacion;

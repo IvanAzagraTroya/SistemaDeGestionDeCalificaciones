@@ -19,7 +19,7 @@ public class EvaluacionRepository implements IEvaluacionRepository {
     private static EvaluacionRepository instance;
     private final DataBaseManager db;
 
-    private EvaluacionRepository(DataBaseManager db) {
+    public EvaluacionRepository(DataBaseManager db) {
         this.db = db;
     }
 

@@ -9,9 +9,12 @@ import repositories.EvaluacionRepository;
 import services.StorageAlumnosCSVFile;
 import utils.Console;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class AlumnoView {
     private static AlumnoView instance;
@@ -21,7 +24,7 @@ public class AlumnoView {
     // No necesitamos hacer un singleton
     private final EvaluacionController evaluacionController = new EvaluacionController(new EvaluacionRepository());
 
-    private AlumnoView() {
+    private AlumnoView() throws SQLException {
     }
 
     public static AlumnoView getInstance() {
@@ -42,7 +45,7 @@ public class AlumnoView {
     /**
      * Muestra los alumnos ordenados por nombre
      */
-    private void mostrarAlumnos() {
+    private void mostrarAlumnos() throws SQLException {
         System.out.println("Mostrar alumnos");
         // Obtengo los países
         List<Alumno> alumnos = alumnoController.getAllAlumnos();
@@ -117,8 +120,12 @@ public class AlumnoView {
         Boolean hasContinua = Console.getBoolean("¿Tiene evaluación continua?");
 
 
-        Alumno alumno = new Alumno().
-                nombre(nombre).apellidos(apellidos).dni(dni).telefono(telefono).evaluacionContinua(hasContinua);
+        var alumno = new Alumno().
+                nombre(nombre).
+                apellidos(apellidos). //Error cannot resolve in optional
+                dni(dni).
+                telefono(telefono).
+                evaluacionContinua(hasContinua);
 
 
         // insertamos el alumno
@@ -131,7 +138,7 @@ public class AlumnoView {
         }
     }
 
-    public void menu() {
+    public void menu() throws SQLException {
         System.out.println("Gestión de Alumnos");
         System.out.println("=================");
         // Bucle infinito a la espera de una opción o salir
@@ -180,7 +187,7 @@ public class AlumnoView {
         } while (true);
     }
 
-    private void importarExportar() {
+    private void importarExportar() throws SQLException {
         System.out.println("Copia de Seguridad de Datos");
         var regex = "importar|exportar";
         var opcion = "";
@@ -220,8 +227,8 @@ public class AlumnoView {
     /**
      * Incluye los alumnos en una lista
      */
-    private List<Alumno> inputLineasAlumnos() {
-        var lineas = new ArrayList<Alumno>();
+    private List<Optional<Alumno>> inputLineasAlumnos() {
+        var lineas = new ArrayList<Optional<Alumno>>();
         var correcto = false;
         do {
             var error = false;

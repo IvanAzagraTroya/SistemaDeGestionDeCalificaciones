@@ -1,12 +1,14 @@
 package controllers;
 
 import lombok.NonNull;
+import org.apache.ibatis.jdbc.ScriptRunner;
 import utils.ApplicationProperties;
 //import org.apache.ibatis.jdbc.ScriptRunner;
 //import lombok.NonNull;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.Reader;
 import java.sql.*;
 import java.util.Optional;
@@ -42,9 +44,9 @@ public class DataBaseManager {
     private DataBaseManager() {
         if(fromPropierties) {
             initConfigFromProperties();
-        }/*else {
+        }else {
             initConfig();
-        }*/
+        }
     }
 
     /**
@@ -58,11 +60,11 @@ public class DataBaseManager {
         return controller;
     }
 
-    /*
+
     /**
      * Carga la configuración de acceso al servidor de la base de datos
      * Esta clase es la configuración hardcodeada
-     /
+     */
 
     // Esta clase deberá ser modificada para hacerla accesible dinámicamente a través de ficheros .env o properties
     private void initConfig() {
@@ -73,7 +75,7 @@ public class DataBaseManager {
         user = "dam";
         password = "dam1234";
     }
-     */
+
 
     /**
      * Carga la configuración de acceso al servidor de Base de Datos desde properties
@@ -221,7 +223,7 @@ public class DataBaseManager {
     public void initData(@NonNull String sqlFile, boolean logWriter) throws FileNotFoundException {
         // Usa el import de apache jdbc scriptRunner
         ScriptRunner sr = new ScriptRunner(connection);
-        Reader reader = new BufferedReader(new FIleReader(sqlFile));
+        Reader reader = new BufferedReader(new FileReader(sqlFile));
         sr.setLogWriter(null);
         sr.runScript(reader);
     }

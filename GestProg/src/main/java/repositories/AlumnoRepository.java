@@ -1,9 +1,8 @@
 package repositories;
 
 import models.Alumno;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeMap;
+
+import java.util.*;
 
 
 /**
@@ -19,7 +18,7 @@ public class AlumnoRepository implements IAlumnoRepository {
      */
     public Alumno findByNombre(String nombre) {
         for (Alumno alumno : this.alumnos.values()) {
-            if (alumno.getNombre().equals(nombre))
+            if (alumno.getNombre().equals(nombre.toUpperCase()))
                 return alumno;
         }
         return null;
@@ -31,8 +30,8 @@ public class AlumnoRepository implements IAlumnoRepository {
      * @return el alumno encontrado o null si no lo encuentra
      */
     @Override
-    public Alumno findById(Integer id) {
-        return this.alumnos.get(id);
+    public Optional<Alumno> findById(Integer id) {
+        return Optional.ofNullable(this.alumnos.get(id));
     }
 
 
@@ -50,9 +49,9 @@ public class AlumnoRepository implements IAlumnoRepository {
      * @param alumno alumno a añadir
      */
     @Override
-    public Alumno save(Alumno alumno) {
+    public Optional<Alumno> save(Alumno alumno) {
         this.alumnos.put(alumno.getId(), alumno);
-        return alumno;
+        return Optional.of(alumno);
     }
 
     /**
@@ -62,9 +61,9 @@ public class AlumnoRepository implements IAlumnoRepository {
      * @return el alumno actualizado
      */
     @Override
-    public Alumno update(Integer id, Alumno alumno) {
+    public Optional<Alumno> update(Integer id, Alumno alumno) {
         this.alumnos.put(id, alumno);
-        return alumno;
+        return Optional.of(alumno);
     }
 
     /**
@@ -74,9 +73,9 @@ public class AlumnoRepository implements IAlumnoRepository {
      * @return el alumno eliminado o null si no lo encuentra
      */
     @Override
-    public Alumno delete(Integer id) {
+    public Optional<Alumno> delete(Integer id) {
 
-        return this.alumnos.remove(id);
+        return Optional.ofNullable(this.alumnos.remove(id));
     }
 
     @Override
