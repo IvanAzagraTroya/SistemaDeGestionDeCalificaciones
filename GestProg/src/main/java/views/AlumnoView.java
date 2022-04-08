@@ -1,30 +1,21 @@
 package views;
 
-import comparators.AlumnoComparatorAlfabeto;
-import controllers.AlumnoController;
-import controllers.EvaluacionController;
+import controllers.DataBaseManager;
 import models.Alumno;
 import repositories.AlumnoRepository;
-import repositories.EvaluacionRepository;
-import services.StorageAlumnosCSVFile;
+import services.MarkdwonGenerator;
 import utils.Console;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class AlumnoView {
     private static AlumnoView instance;
-    // Le inyectamos la dependencia.
-    // private final AlumnoController alumnoController = AlumnoController.getInstance(new AlumnoRepository());
-    private final AlumnoController alumnoController = new AlumnoController(new AlumnoRepository(), new StorageAlumnosCSVFile());
-    // No necesitamos hacer un singleton
-    private final EvaluacionController evaluacionController = new EvaluacionController(new EvaluacionRepository());
+    private final AlumnoRepository repo = AlumnoRepository.getInstance(DataBaseManager.getInstance());
 
-    private AlumnoView() throws SQLException {
+
+    private AlumnoView() {
     }
 
     public static AlumnoView getInstance() {
@@ -45,11 +36,16 @@ public class AlumnoView {
     /**
      * Muestra los alumnos ordenados por nombre
      */
-    private void mostrarAlumnos() throws SQLException {
+    private void mostrarAlumnos() {
         System.out.println("Mostrar alumnos");
         // Obtengo los países
-        List<Alumno> alumnos = alumnoController.getAllAlumnos();
-        alumnos.sort(new AlumnoComparatorAlfabeto());
+        List<Alumno> alumnos = null;
+        try {
+            alumnos = repo.findAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //alumnos.sort(new AlumnoComparatorAlfabeto());
         System.out.println("Hay " + alumnos.size() + " alumnos");
         for (Alumno alumno : alumnos) {
             System.out.println(alumno);
@@ -66,24 +62,24 @@ public class AlumnoView {
 
         try {
             // Comprobamos si existe el alumno antes de pedirle los datos
-            var existe = alumnoController.getAlumnoByNombre(nombre);
+            var existe = repo.findByNombre(nombre);
 
             // Tomamos los nuevos datos o nos quedamos con los antiguos si son blancos.
-            String nuevoNombre = Console.getString("Nuevo nombre del alumno (anterior: " + existe.getNombre() + "): ");
-            nuevoNombre = (nuevoNombre.isEmpty()) ? existe.getNombre() : nuevoNombre;
+            String nuevoNombre = Console.getString("Nuevo nombre del alumno (anterior: " + existe.get().getNombre() + "): ");
+            nuevoNombre = (nuevoNombre.isEmpty()) ? existe.get().getNombre() : nuevoNombre;
 
-            String nuevosApellidos = Console.getString("Nuevos apellidos del alumno (anterior: " + existe.getApellidos() + "): ");
-            nuevosApellidos = (nuevosApellidos.isEmpty()) ? existe.getApellidos() : nuevosApellidos;
+            String nuevosApellidos = Console.getString("Nuevos apellidos del alumno (anterior: " + existe.get().getApellidos() + "): ");
+            nuevosApellidos = (nuevosApellidos.isEmpty()) ? existe.get().getApellidos() : nuevosApellidos;
 
             // Es importante crear un objeto nuevo, porque si no al ser referencias tocamos el del repositorio
             // Esto no pasará con ficheros o bases de datos
-            var update = existe.clone()
-                    .nombre(nuevoNombre)
-                    .apellidos(nuevosApellidos)
+            var update = existe.get().clone()
+                    .nombre(nuevoNombre).
+                    get().apellidos(nuevosApellidos)
                     ;
 
             // Actualizamos el alumno
-            var res = alumnoController.updateAlumno(existe.getId(), update);
+            var res = repo.update(existe.get().getId(), update.get());
             System.out.println("Alumno actualizado");
             System.out.println(res);
         } catch (Exception e) {
@@ -96,9 +92,9 @@ public class AlumnoView {
      */
     private void eliminarAlumno() {
         System.out.println("Eliminar alumno");
-        String nombre = Console.getString("Nombre del alumno: ");
+        int posicion = Console.getInt("POsicion en la lista del alumno: ");
         try {
-            var res = alumnoController.deleteAlumno(nombre);
+            var res = repo.delete(posicion);
             System.out.println("Alumno eliminado correctamente");
             System.out.println(res);
         } catch (Exception e) {
@@ -117,28 +113,25 @@ public class AlumnoView {
         String dni = Console.getString("DNI del alumno: ");
         String telefono = Console.getString("Teléfono del alumno: ");
 
-        Boolean hasContinua = Console.getBoolean("¿Tiene evaluación continua?");
+        String hasContinua = Console.getString("¿Tiene evaluación continua?");
 
 
-        var alumno = new Alumno().
+        var alumno = new Alumno().builder().
                 nombre(nombre).
-                apellidos(apellidos). //Error cannot resolve in optional
+                apellidos(apellidos).
                 dni(dni).
                 telefono(telefono).
-                evaluacionContinua(hasContinua);
-
-
-        // insertamos el alumno
-        try {
-            var res = alumnoController.crearAlumno(alumno);
-            System.out.println("Alumno creado correctamente");
-            System.out.println(res);
-        } catch (Exception e) {
-            System.out.println("Error al crear: " + e.getMessage());
+                evaluacionContinua(hasContinua).
+                build();
+        Optional<Alumno> res = repo.save(alumno);
+        if(res.isPresent()){
+            System.out.println("alumno guardado correctamente");
+        }else{
+            System.err.println("no se ha podido guardar el alumno");
         }
     }
 
-    public void menu() throws SQLException {
+    public void menu() {
         System.out.println("Gestión de Alumnos");
         System.out.println("=================");
         // Bucle infinito a la espera de una opción o salir
@@ -149,12 +142,11 @@ public class AlumnoView {
             System.out.println("3. Actualizar alumno");
             System.out.println("4. Mostrar lista de alumnos");
             System.out.println("5. Consultar alumno");
-            System.out.println("6. Crear evaluaciones");
-            System.out.println("7. Importar/Exportar");
+            System.out.println("6. Importar/Exportar");
             System.out.println("0. Salir");
             System.out.println();
             String opcion = Console.getString("Elige una opción [0-7]: ");
-            // Expresion regular para validar la opción
+            // Expresión regular para validar la opción
             var regex = "[0-8]";
             if (opcion.matches(regex)) {
                 switch (opcion) {
@@ -174,10 +166,7 @@ public class AlumnoView {
                         getAlumnoByNombre();
                         break;
                     case "6":
-                        //crearEvaluaciones();
-                        break;
-                    case "7":
-                        importarExportar();
+                        exportar();
                         break;
                     case "0":
                         salir();
@@ -187,42 +176,18 @@ public class AlumnoView {
         } while (true);
     }
 
-    private void importarExportar() throws SQLException {
-        System.out.println("Copia de Seguridad de Datos");
-        var regex = "importar|exportar";
-        var opcion = "";
-        do {
-            opcion = Console.getString("Importar/Exportar datos: ").toLowerCase(Locale.getDefault());
-            if (!opcion.matches(regex)) {
-                System.out.println("Opción incorrecta");
-            }
-        } while (!opcion.matches(regex));
-
-        switch (opcion) {
-            case "importar":
-                alumnoController.importarDatos();
-                break;
-            case "exportar":
-                alumnoController.exportarDatos();
-                break;
-        }
-
-    }
-
-    /**
-     * Crear evaluaciones
-     */
-    /*private void crearEvaluaciones() {
-        System.out.println("Realizar Evaluaciones");
-        var alumnos = inputLineasAlumnos();
+    private void exportar(){
+       var mdGenerator = new MarkdwonGenerator();
+        List<Alumno> lista = null;
         try {
-            var res = evaluacionController.crearEvaluaciones("Acuerdo Internacional", "Un acuerdo", alumnos);
-            System.out.println("El acuerdo se firmó correctamente");
-            System.out.println(res);
-        } catch (Exception e) {
-            System.out.println("Error al crear las evaluaciones: " + e.getMessage());
+            lista = repo.findAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    }*/
+
+        System.out.println("creando el archivo");
+        mdGenerator.generarMD(lista);
+    }
 
     /**
      * Incluye los alumnos en una lista
@@ -236,7 +201,7 @@ public class AlumnoView {
             // revisamos que las matriculas introducidas existan
             for (String nombre : alumnos) {
                 try {
-                    var alumno = alumnoController.getAlumnoByNombre(nombre.trim());
+                    var alumno = repo.findByNombre(nombre.trim());
                     lineas.add(alumno);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
@@ -260,7 +225,7 @@ public class AlumnoView {
         System.out.println("Mostrar alumno");
         String nombre = Console.getString("Nombre del alumno: ");
         try {
-            var res = alumnoController.getAlumnoByNombre(nombre);
+            var res = repo.findByNombre(nombre);
             System.out.println(res);
         } catch (Exception e) {
             System.out.println("Error al consultar: " + e.getMessage());

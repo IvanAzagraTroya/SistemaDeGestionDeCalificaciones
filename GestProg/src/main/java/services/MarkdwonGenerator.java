@@ -1,48 +1,50 @@
 package services;
 
-import fun.mingshan.markdown4j.type.block.CodeBlock;
-import fun.mingshan.markdown4j.type.block.TableBlock;
 import models.Alumno;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Iván Azagra
  */
-public class MarkdwonGenerator implements IStorageAlumno {
-    private final Path currentRelativePath = Paths.get("");
-    private final String ruta = currentRelativePath.toAbsolutePath().toString();
-    private final String dir = ruta + File.separator + "data";
-    private final String alumnoMarkdown = dir +File.separator + "GestorDeEvaluaciones.md";
+public class MarkdwonGenerator{
+    private final String path = System.getProperty("User.dir")+ File.separator+"GestProg"+File.separator+"src"+File.separator+"main"+File.separator+"resources";
+    private final LocalDateTime date = LocalDateTime.now();
+    public void generarMD(List<Alumno> lista){
 
-    public MarkdwonGenerator() {
-        init()
-    }
+        File archivo = new File(path+File.separator+"Alumnado.md");
 
-    private void init(){
-        Path path = Paths.get(dir);
-        if(!Files.exists(path)) {
-            try{
-                Files.createDirectories(path);
-            }catch(IOException e) {
-                System.out.println("Error: " + e.getMessage());
-            }
+        try {
+            FileWriter fw = new FileWriter(archivo);
+            fw.write("# GESTIÓN DE ALUMNOS\n");
+            lista.forEach(v->{
+                try {
+                    fw.write(generadorTexto(v));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            fw.write("Creado el dia "+date+"\n");
+            fw.write("Generado en: "+"ms");
+            fw.flush();
+            fw.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    @Override
-    public boolean save(List<Optional<Alumno>>){
-        CodeBlock codeBlock = CodeBlock.builder().
-                                language(CodeBlock.Language.JAVA.getDesc()).
-                                content("# Gestión de calificaciones").
-                                build();
-        List<TableBlock.TableRow> rows = new ArrayList<>();
+    private String generadorTexto(Alumno a){
+
+        String texto = "## Alumno "+"_"+a.getNombre()+"_"+" "+a.getApellidos()+"_"+"\n"
+                +" * DNI -> "+"_"+a.getDni()+"_"+"\n"
+                +" * Evaluacion continua -> "+"_"+a.getEvaluacionContinua()+"_"+"\n"
+                +" * Telefono de contacto -> "+"_"+a.getTelefono()+"_"+"\n";
+        return texto;
     }
 }

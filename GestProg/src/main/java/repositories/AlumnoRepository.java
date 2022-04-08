@@ -1,7 +1,11 @@
 package repositories;
 
+import controllers.DataBaseManager;
 import models.Alumno;
+import org.apache.ibatis.jdbc.SQL;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 
@@ -9,19 +13,41 @@ import java.util.*;
  * Repository para los alumnos siguiendo el TDA Mapa
  */
 public class AlumnoRepository implements IAlumnoRepository {
-    private final TreeMap<Integer, Alumno> alumnos = new TreeMap<>();
+    private static AlumnoRepository instance;
+    DataBaseManager db = DataBaseManager.getInstance();
 
+    private AlumnoRepository(DataBaseManager dataBaseManager) {
+        this.db = dataBaseManager;
+    }
+
+    public static AlumnoRepository getInstance(DataBaseManager dataBaseManager) {
+        if(instance == null) {
+            instance = new AlumnoRepository(dataBaseManager);
+        }
+        return instance;
+    }
     /**
      * Busca un alumno por su nombre
      * @param nombre nombre del alumno
      * @return el alumno encontrado o null si no lo encuentra
      */
-    public Alumno findByNombre(String nombre) {
-        for (Alumno alumno : this.alumnos.values()) {
-            if (alumno.getNombre().equals(nombre.toUpperCase()))
-                return alumno;
+    public Optional<Alumno> findByNombre(String nombre) throws SQLException {
+        String query = "SELECT * FROM alumno WHERE nombre = ?";
+        db.open();
+        ResultSet result = db.select(query, nombre).orElseThrow(() -> new SQLException("Error al consultar alumno con nombre: "+ nombre));
+        if (result.first()) {
+            Alumno alumno = new Alumno(
+                    result.getInt("id"),
+                    result.getString("nombre"),
+                    result.getString("apellidos"),
+                    result.getString("dni"),
+                    result.getString("telefono"),
+                    result.getString("evaluacionContinua")
+            );
+            db.close();
+            return Optional.of(alumno);
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -30,8 +56,23 @@ public class AlumnoRepository implements IAlumnoRepository {
      * @return el alumno encontrado o null si no lo encuentra
      */
     @Override
-    public Optional<Alumno> findById(Integer id) {
-        return Optional.ofNullable(this.alumnos.get(id));
+    public Optional<Alumno> findById(Integer id) throws SQLException {
+        String query = "SELECT * FROM alumno WHERE id = ?";
+        db.open();
+        ResultSet result = db.select(query, id).orElseThrow(() -> new SQLException("Error al consultar el id: "+id));
+        if(result.first()) {
+            Alumno alumno = new Alumno(
+                    result.getInt("id"),
+                    result.getString("nombre"),
+                    result.getString("apellidos"),
+                    result.getString("dni"),
+                    result.getString("telefono"),
+                    result.getString("evaluacionContinua")
+            );
+            db.close();
+            return Optional.of(alumno);
+        }
+        return Optional.empty();
     }
 
 
@@ -40,18 +81,51 @@ public class AlumnoRepository implements IAlumnoRepository {
      * @return lista de alumnos
      */
     @Override
-    public List<Alumno> findAll() {
-        return new ArrayList<>(this.alumnos.values());
-    }
+    public List<Alumno> findAll() throws SQLException {
+        String query = "SELECT * FROM alumno";
+        List<Alumno> alumnos = new ArrayList<>();
+        db.open();
+        ResultSet result = db.select(query).orElseThrow(() -> new SQLException("Error al obtener todos los alumnos"));
 
+        int posicion = 1;
+        while(result.next()){
+            alumnos.add(result.getObject(posicion,Alumno.class));
+            posicion++;
+        }
+
+        return alumnos;
+    }
     /**
      * Añade un alumno
      * @param alumno alumno a añadir
      */
     @Override
     public Optional<Alumno> save(Alumno alumno) {
-        this.alumnos.put(alumno.getId(), alumno);
-        return Optional.of(alumno);
+        String query = "insert into alumno (nombre,apellidos,dni,telefono,evaluacion_continua) values(?,?,?,?,?)";
+        Alumno a = new Alumno();
+        try{
+            db.open();
+            Optional<ResultSet> rs = db.insert(
+                    query,
+                    alumno.getNombre(),
+                    alumno.getApellidos(),
+                    alumno.getDni(),
+                    alumno.getTelefono(),
+                    alumno.getEvaluacionContinua()
+            );
+
+            if(rs.isPresent()){
+                a = rs.get().getObject(1,Alumno.class); //si no funciona cambiar a casteo normal y quitar el segundo paramtro
+            }else{
+                throw new Exception("Error al recibir el alumno creado");
+            }
+            db.close();
+        }catch(SQLException e){
+            System.err.println("No se ha podido crear el usuario");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Optional.of(a);
     }
 
     /**
@@ -61,8 +135,14 @@ public class AlumnoRepository implements IAlumnoRepository {
      * @return el alumno actualizado
      */
     @Override
-    public Optional<Alumno> update(Integer id, Alumno alumno) {
-        this.alumnos.put(id, alumno);
+    public Optional<Alumno> update(Integer id, Alumno alumno) throws SQLException {
+        this.findById(id).orElseThrow(() -> new SQLException("Error al actualizar el alumno con id: " +id));
+        String query = "UPDATE alumno SET nombre = ?, apellidos = ?, dni = ?, telefono = ?, evaluacionContinua = ?" +
+                "WHERE id = ?";
+        db.open();
+        int res = db.update(query, alumno.getNombre(), alumno.getApellidos(),alumno.getTelefono(),
+                alumno.getEvaluacionContinua());
+        db.close();
         return Optional.of(alumno);
     }
 
@@ -73,14 +153,21 @@ public class AlumnoRepository implements IAlumnoRepository {
      * @return el alumno eliminado o null si no lo encuentra
      */
     @Override
-    public Optional<Alumno> delete(Integer id) {
-
-        return Optional.ofNullable(this.alumnos.remove(id));
+    public Optional<Alumno> delete(Integer id) throws SQLException {
+        Alumno alumno = this.findById(id).orElseThrow(() -> new SQLException("Error al borrar el alumno con id: "+id));
+        String query = "DELETE FROM alumno WHERE id = ?";
+        db.open();
+        db.delete(query, id);
+        db.close();
+        return Optional.of(alumno);
     }
 
     @Override
-    public void clearAll() {
-        this.alumnos.clear();
+    public void clearAll() throws SQLException {
+        String query = "DELETE FROM alumno";
+        db.open();
+        db.delete(query);
+        db.close();
     }
 
 }

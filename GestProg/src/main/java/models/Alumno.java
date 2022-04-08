@@ -1,8 +1,11 @@
 package models;
 
+import lombok.Builder;
+
 import java.util.Objects;
 import java.util.Optional;
 
+@Builder
 /**
  * Clase que representa a un alumno
  */
@@ -13,14 +16,14 @@ public class Alumno {
     private String apellidos;
     private String dni;
     private String telefono;
-    private Boolean evaluacionContinua;
+    private String evaluacionContinua;
 
     public Alumno(){
         this.id = ++contador;
     }
 
     public Alumno(String nombre, String apellidos, String dni,
-                  String telefono, Boolean evaluacionContinua) {
+                  String telefono, String evaluacionContinua) {
         this.id = ++contador;
         this.nombre = nombre;
         this.apellidos = apellidos;
@@ -32,7 +35,7 @@ public class Alumno {
     //Para el clone
 
     public Alumno(int id, String nombre, String apellidos, String dni,
-                  String telefono, Boolean evaluacionContinua) {
+                  String telefono, String evaluacionContinua) {
         this.id = id;
         this.nombre = nombre;
         this.apellidos = apellidos;
@@ -79,11 +82,11 @@ public class Alumno {
         this.telefono = telefono;
     }
 
-    public Boolean getEvaluacionContinua() {
+    public String getEvaluacionContinua() {
         return evaluacionContinua;
     }
 
-    public void setEvaluacionContinua(Boolean evaluacionContinua) {
+    public void setEvaluacionContinua(String evaluacionContinua) {
         this.evaluacionContinua = evaluacionContinua;
     }
 
@@ -97,7 +100,7 @@ public class Alumno {
         return Optional.of(this);
     }
 
-    public Alumno dni(String dni) {
+    /*public Alumno dni(String dni) {
         this.dni=dni;
         return this;
     }
@@ -107,11 +110,11 @@ public class Alumno {
         return this;
     }
 
-    public Alumno evaluacionContinua(Boolean evaluacionContinua) {
+    public Alumno evaluacionContinua(String evaluacionContinua) {
         this.evaluacionContinua=evaluacionContinua;
         return this;
     }
-
+*/
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

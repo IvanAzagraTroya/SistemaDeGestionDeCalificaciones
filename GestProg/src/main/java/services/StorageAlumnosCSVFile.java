@@ -90,7 +90,7 @@ public class StorageAlumnosCSVFile implements IStorageAlumno{
                 campos[2],
                 campos[3],
                 campos[4],
-                Boolean.getBoolean(campos[5])
+                campos[5]
 
         );
     }

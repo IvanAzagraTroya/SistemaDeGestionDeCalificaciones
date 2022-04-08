@@ -13,31 +13,31 @@ import java.util.Optional;
  * @author Iván Azagra Troya
  * Repositorio para las evaluaciones siguiendo el
  */
-// Da error por no implementar la función update, pero por requisito de la aplicación la evaluación no puede ser actualizada
-// una vez ha sido creada.
+
 public class EvaluacionRepository implements IEvaluacionRepository {
     private static EvaluacionRepository instance;
-    private final DataBaseManager db;
+    private final DataBaseManager db = DataBaseManager.getInstance();
 
-    public EvaluacionRepository(DataBaseManager db) {
-        this.db = db;
+    public EvaluacionRepository() {
+
     }
 
     /**
      * Patrón singleton
      * @return instancia de la clase
      */
-    public static EvaluacionRepository getInstance(DataBaseManager db) {
+    public static EvaluacionRepository getInstance() {
         if(instance == null) {
-            instance = new EvaluacionRepository(db);
+            instance = new EvaluacionRepository();
         }
         return instance;
     }
 
     /**
      * Busca evaluación por el nombre
-     * @params nombre
-     * @throws SQLException+
+     * @param nombre de la evaluación
+     * @return Optional de la evaluación o null si no la encuentra
+     * @throws SQLException Maneja los fallos con la base de datos
      */
     public Optional<Evaluacion> findByNombre(String nombre) throws SQLException {
         String query = "SELECT * FROM evaluacion WHERE nombre = ?";
@@ -62,9 +62,9 @@ public class EvaluacionRepository implements IEvaluacionRepository {
 
     /**
      * Busca evaluación por su id
-     * @param id
+     * @param id Número de identificación de la evaluación
      * @return la evaluación o null si no es encontrada
-     * @throws SQLException
+     * @throws SQLException Fallo con la base de datos
      */
     @Override
     public Optional<Evaluacion> findById(Integer id) throws SQLException {
@@ -88,7 +88,7 @@ public class EvaluacionRepository implements IEvaluacionRepository {
 
     /**
      * Devuelve todas las evaluaciones
-     * @reutrn lista de evaluaciones
+     * @return lista de evaluaciones
      */
     @Override
     public List<Evaluacion> findAll() throws SQLException {
@@ -114,10 +114,12 @@ public class EvaluacionRepository implements IEvaluacionRepository {
     }
 
     /**
-     * Añade una evaluación
-     * @params evaluación a añadir
+     * Evaluación a guardar
+     * @param evaluacion evaluación que guarde el método
+     * @return Un optional con la evaluación o null si no la encuentra
+     * @throws SQLException Maneja los fallos con la base de datos
      */
-    // El error lleva a la clase alumnosrepository
+
     @Override
     public Optional<Evaluacion> save(Evaluacion evaluacion) throws SQLException {
         String query = "INERT INTO evaluacion VALUES (null, ?, ?, ?, ?, ?, ?)";
@@ -136,11 +138,11 @@ public class EvaluacionRepository implements IEvaluacionRepository {
 
     /**
      *
-     * @param id
+     * @param id Número de identificación del Alumno
      * @return evaluación que ha sido eliminado o null si no lo encuentra
-     * @throws SQLException
+     * @throws SQLException Exceptión de fallo con la base de datos
      */
-    // El error lleva a la clase alumnosrepository
+
     @Override
     public Optional<Evaluacion> delete(Integer id) throws SQLException {
         Evaluacion evaluacion = this.findById(id).orElseThrow(() -> new SQLException("Error al eliminar la evaluación con id "+id+ ", no ha sido encontrado"));

@@ -72,8 +72,8 @@ public class DataBaseManager {
         serverPort = "3306";
         dataBaseName = "dam";
         jdbcDriver = "com.mysql.cj.jdbc.Driver";
-        user = "dam";
-        password = "dam1234";
+        user = "root";
+        password = "";
     }
 
 
