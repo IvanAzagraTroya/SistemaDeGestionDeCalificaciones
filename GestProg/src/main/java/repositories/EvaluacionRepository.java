@@ -44,15 +44,14 @@ public class EvaluacionRepository implements IEvaluacionRepository {
         db.open();
         ResultSet result = db.select(query, nombre).orElseThrow(() -> new SQLException("Error al realizar la consulta"));
         if(result.first()) {
-            // REVISAR ESTA PARTE YA QUE PODRÍA PETAR SI NO SE PARSEAN A PARTIR DEL TERCER ATRIBUTO A INT.
             Evaluacion evaluacion = new Evaluacion(
                     result.getInt("idEvaluacion"),
                     result.getString("nombreEvaluacion"),
-                    result.getString("notaMaxEvaluacion"),
-                    result.getString("notaMinEvaluacion"),
-                    result.getString("notaMediaEvaluacion"),
-                    result.getString("porcientoAprobados"),
-                    result.getString("porcientoSuspensos")
+                    result.getFloat("notaMaxEvaluacion"),
+                    result.getFloat("notaMinEvaluacion"),
+                    result.getFloat("notaMediaEvaluacion"),
+                    result.getInt("porcientoAprobados"),
+                    result.getInt("porcientoSuspensos")
             );
             db.close();
             return Optional.of(evaluacion);
@@ -75,11 +74,11 @@ public class EvaluacionRepository implements IEvaluacionRepository {
             Evaluacion evaluacion = new Evaluacion(
                     result.getInt("idEvaluacion"),
                     result.getString("nombreEvaluacion"),
-                    result.getString("notaMaxEvaluacion"),
-                    result.getString("notaMinEvaluacion"),
-                    result.getString("notaMediaEvaluacion"),
-                    result.getString("porcientoAprobados"),
-                    result.getString("porcientoSuspensos")
+                    result.getFloat("notaMaxEvaluacion"),
+                    result.getFloat("notaMinEvaluacion"),
+                    result.getFloat("notaMediaEvaluacion"),
+                    result.getInt("porcientoAprobados"),
+                    result.getInt("porcientoSuspensos")
             );
             return Optional.of(evaluacion);
         }
@@ -101,11 +100,11 @@ public class EvaluacionRepository implements IEvaluacionRepository {
                     new Evaluacion(
                             result.getInt("idEvaluacion"),
                             result.getString("nombreEvaluacion"),
-                            result.getString("notaMaxEvaluacion"),
-                            result.getString("notaMinEvaluacion"),
-                            result.getString("notaMediaEvaluacion"),
-                            result.getString("porcientoAprobados"),
-                            result.getString("porcientoSuspensos")
+                            result.getFloat("notaMaxEvaluacion"),
+                            result.getFloat("notaMinEvaluacion"),
+                            result.getFloat("notaMediaEvaluacion"),
+                            result.getInt("porcientoAprobados"),
+                            result.getInt("porcientoSuspensos")
                     )
             );
         }

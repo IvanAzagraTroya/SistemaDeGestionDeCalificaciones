@@ -115,7 +115,7 @@ public class AlumnoRepository implements IAlumnoRepository {
             );
 
             if(rs.isPresent()){
-                a = rs.get().getObject(1,Alumno.class); //si no funciona cambiar a casteo normal y quitar el segundo paramtro
+                a = rs.get().getObject(1,Alumno.class); // Si no funciona cambiar a casteo normal y quitar el segundo parámetro
             }else{
                 throw new Exception("Error al recibir el alumno creado");
             }

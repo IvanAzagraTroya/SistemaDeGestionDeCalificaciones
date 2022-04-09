@@ -7,17 +7,15 @@ public class Evaluacion {
 
     private int idEvaluacion;
     private String nombreEvaluacion;
-    //Podría ponerse como float para aceptar decimales ya que para la evaluación final
-    // me parece que si se toman en cuenta en la evaluación final aunque no se muestre en el boletín
-    private String notaMaxEvaluacion;
-    private String notaMinEvaluacion;
-    private String notaMediaEvaluacion;
-    private String porcientoAprobados;
-    private String porcientoSuspensos;
+    private float notaMaxEvaluacion;
+    private float notaMinEvaluacion;
+    private float notaMediaEvaluacion;
+    private int porcientoAprobados;
+    private int porcientoSuspensos;
 
 
-    public Evaluacion(int idEvaluacion, String nombreEvaluacion, String notaMaxEvaluacion,
-                      String notaMinEvaluacion, String notaMediaEvaluacion, String porcientoAprobados, String porcientoSuspensos){
+    public Evaluacion(int idEvaluacion, String nombreEvaluacion, float notaMaxEvaluacion,
+                      float notaMinEvaluacion, float notaMediaEvaluacion, int porcientoAprobados, int porcientoSuspensos){
         this.idEvaluacion = idEvaluacion;
         this.nombreEvaluacion = nombreEvaluacion;
         this.notaMaxEvaluacion = notaMaxEvaluacion;
@@ -43,43 +41,43 @@ public class Evaluacion {
         this.nombreEvaluacion = nombreEvaluacion;
     }
 
-    public String getNotaMaxEvaluacion() {
+    public float getNotaMaxEvaluacion() {
         return notaMaxEvaluacion;
     }
 
-    public void setNotaMaxEvaluacion(String notaMaxEvaluacion) {
+    public void setNotaMaxEvaluacion(float notaMaxEvaluacion) {
         this.notaMaxEvaluacion = notaMaxEvaluacion;
     }
 
-    public String getNotaMinEvaluacion() {
+    public float getNotaMinEvaluacion() {
         return notaMinEvaluacion;
     }
 
-    public void setNotaMinEvaluacion(String notaMinEvaluacion) {
+    public void setNotaMinEvaluacion(float notaMinEvaluacion) {
         this.notaMinEvaluacion = notaMinEvaluacion;
     }
 
-    public String getNotaMediaEvaluacion() {
+    public float getNotaMediaEvaluacion() {
         return notaMediaEvaluacion;
     }
 
-    public void setNotaMediaEvaluacion(String notaMediaEvaluacion) {
+    public void setNotaMediaEvaluacion(float notaMediaEvaluacion) {
         this.notaMediaEvaluacion = notaMediaEvaluacion;
     }
 
-    public String getPorcientoAprobados() {
+    public int getPorcientoAprobados() {
         return porcientoAprobados;
     }
 
-    public void setPorcientoAprobados(String porcientoAprobados) {
+    public void setPorcientoAprobados(int porcientoAprobados) {
         this.porcientoAprobados = porcientoAprobados;
     }
 
-    public String getPorcientoSuspensos() {
+    public int getPorcientoSuspensos() {
         return porcientoSuspensos;
     }
 
-    public void setPorcientoSuspensos(String porcientoSuspensos) {
+    public void setPorcientoSuspensos(int porcientoSuspensos) {
         this.porcientoSuspensos = porcientoSuspensos;
     }
 
